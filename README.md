@@ -1,3 +1,5 @@
+<img alt="img" src="https://user-images.githubusercontent.com/102277/28255894-3f052692-6a82-11e7-8258-d8523f269d52.png">
+
 # Ising Model WebGL
 
 The [Ising Model](https://en.wikipedia.org/wiki/Ising_model) is a very interesting mathematical model describing the ferromagnetism of materials and is part of Statistical Mechanics in Physics.
@@ -22,5 +24,7 @@ I've been using [dat.gui](https://github.com/dataarts/dat.gui) for other project
 
 * https://google.github.io/paper-gui/
 * https://github.com/dataarts/dat.gui
+
+
 
 
