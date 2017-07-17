@@ -1,4 +1,4 @@
-<img alt="img" src="https://user-images.githubusercontent.com/102277/28255894-3f052692-6a82-11e7-8258-d8523f269d52.png">
+<img alt="img" src="https://user-images.githubusercontent.com/102277/28255934-c1d2e1e0-6a82-11e7-8d1d-65f04e8de38f.png">
 
 # Ising Model WebGL
 
