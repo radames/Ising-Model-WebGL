@@ -132,165 +132,167 @@ for (var x = 0; x < sx; x++) {
 }
 
 //GUI using DAT.gui version in Polymer paper elements
-var gui = new PaperGUI();
-gui.open();
 
-var SimParams = function() {
-  this.message = 'dat.gui';
-  this.T = 5
-  this.toHeat = f => tempGrad(1);
-  this.toCool = f => tempGrad(-1);
-  this.radius = 10;
-  this.invertDraw = false;
-  this.pause = false;
-};
+document.addEventListener('PaperGUIReady', e => {
 
-var params = new SimParams();
-var tController = gui.add(params, 'T', 0.00, 5.00).step(0.01).name('Temperature'); // Mix and match
-gui.add(params, 'toCool').name('Cool')
-gui.add(params, 'toHeat').name('Heat')
-gui.add(params, 'radius', 1, 100).name('Draw size'); // Mix and match
-gui.add(params, 'invertDraw').name('Invert draw color'); // Mix and match
-var simPause = gui.add(params, 'pause').name('Pause Simulation');
+  var gui = new PaperGUI();
+  gui.open();
 
+  var SimParams = function() {
+    this.message = 'dat.gui';
+    this.T = 5
+    this.toHeat = f => tempGrad(1);
+    this.toCool = f => tempGrad(-1);
+    this.radius = 10;
+    this.invertDraw = false;
+    this.pause = false;
+  };
 
-//Automatic Temperature Gradient
-var isGradRunning = false;
-var tempGrad = (type) => {
-  if (!isGradRunning) {
-    isGradRunning = true;
-    var initT = params.T;
-    var timerID = setInterval(timer => {
-      tController.sliderEl_.value = ((initT));
-      tController.sliderEl_.dispatchEvent(new Event('change'));
-      initT += type * 0.1;
-      if (initT <= 0.5 || initT >= 5.0) {
-        clearInterval(timerID);
-        isGradRunning = false;
-      }
-    }, 200);
-  }
-}
-
-//var Z = world.map(line => line.reduce((a, b) => a + b)).reduce((a, b) => a + b);
+  var params = new SimParams();
+  var tController = gui.add(params, 'T', 0.00, 5.00).step(0.01).name('Temperature'); // Mix and match
+  gui.add(params, 'toCool').name('Cool')
+  gui.add(params, 'toHeat').name('Heat')
+  gui.add(params, 'radius', 1, 100).name('Draw size'); // Mix and match
+  gui.add(params, 'invertDraw').name('Invert draw color'); // Mix and match
+  var simPause = gui.add(params, 'pause').name('Pause Simulation');
 
 
-//Mouse and Touch events
-var mousedragging = false;
-var touchdragging = false;
-canvas.addEventListener("mousedown", e => {
-  mousedragging = true;
-});
-canvas.addEventListener("touchstart", e => {
-  touchdragging = true;
-});
-canvas.addEventListener("mouseup", e => {
-  mousedragging = false;
-});
-canvas.addEventListener("touchend", e => {
-  touchdragging = false;
-});
-canvas.addEventListener("touchmove", e => {
-  if (touchdragging) {
-    drawCircle(e.touches[0].clientX / 2, e.touches[0].clientY / 2);
-  }
-});
-canvas.addEventListener("mousemove", e => {
-  if (mousedragging) {
-    drawCircle(e.clientX / 2, e.clientY / 2);
-  }
-});
-
-//Given a position and radius draws circle in the world matrix
-var drawCircle = (posX, posY) => {
-  var p1, p2, esq, x, y, dir, down, up;
-  var p1 = parseInt(posX);
-  var p2 = parseInt(posY);
-  for (var r = 0; r < params.radius; r++) {
-    for (var a = 0; a <= 360; a++) {
-      x = parseInt(r * Math.cos(a)) + p1;
-      y = parseInt(r * Math.sin(a)) + p2;
-
-      if (x >= sx) {
-        x = sx - 1;
-      }
-      if (y >= sy) {
-        y = sy - 1;
-      }
-
-      if (x <= 0) {
-        x = 0;
-      }
-      if (y <= 0) {
-        y = 0;
-      }
-      if (!params.invertDraw) {
-        world[x][y] = -1;
-      } else {
-        world[x][y] = 1;
-      }
+  //Automatic Temperature Gradient
+  var isGradRunning = false;
+  var tempGrad = (type) => {
+    if (!isGradRunning) {
+      isGradRunning = true;
+      var initT = params.T;
+      var timerID = setInterval(timer => {
+        tController.sliderEl_.value = ((initT));
+        tController.sliderEl_.dispatchEvent(new Event('change'));
+        initT += type * 0.1;
+        if (initT <= 0.5 || initT >= 5.0) {
+          clearInterval(timerID);
+          isGradRunning = false;
+        }
+      }, 200);
     }
   }
-}
 
-//Simulation function
-var simulation = f => {
-  for (var count = 0; count <= sx * sy / 2; count++) {
-    var m = 0;
-    var r1 = parseInt(Math.random() * sx);
-    var r2 = parseInt(Math.random() * sy);
+  //var Z = world.map(line => line.reduce((a, b) => a + b)).reduce((a, b) => a + b);
 
-    var esq = r1 - 1;
-    var dir = r1 + 1;
-    var down = r2 + 1;
-    var up = r2 - 1;
 
-    if (esq < 0) {
-      esq = sx - 1;
+  //Mouse and Touch events
+  var mousedragging = false;
+  var touchdragging = false;
+  canvas.addEventListener("mousedown", e => {
+    mousedragging = true;
+  });
+  canvas.addEventListener("touchstart", e => {
+    touchdragging = true;
+  });
+  canvas.addEventListener("mouseup", e => {
+    mousedragging = false;
+  });
+  canvas.addEventListener("touchend", e => {
+    touchdragging = false;
+  });
+  canvas.addEventListener("touchmove", e => {
+    if (touchdragging) {
+      drawCircle(e.touches[0].clientX / 2, e.touches[0].clientY / 2);
     }
-    if (dir >= sx) {
-      dir = 0;
+  });
+  canvas.addEventListener("mousemove", e => {
+    if (mousedragging) {
+      drawCircle(e.clientX / 2, e.clientY / 2);
     }
-    if (up < 0) {
-      up = sy - 1;
-    }
-    if (down >= sy) {
-      down = 0;
-    }
+  });
 
-    var E = 2 * world[r1][r2] * (world[dir][r2] + world[esq][r2] + world[r1][down] + world[r1][up]);
+  //Given a position and radius draws circle in the world matrix
+  var drawCircle = (posX, posY) => {
+    var p1, p2, esq, x, y, dir, down, up;
+    var p1 = parseInt(posX);
+    var p2 = parseInt(posY);
+    for (var r = 0; r < params.radius; r++) {
+      for (var a = 0; a <= 360; a++) {
+        x = parseInt(r * Math.cos(a)) + p1;
+        y = parseInt(r * Math.sin(a)) + p2;
 
-    if (E <= 0) {
-      world[r1][r2] = -world[r1][r2];
-    }
-    if (E > 0) {
-      var p = Math.exp(-E / params.T);
-      var r = Math.random();
-      if (r <= p) world[r1][r2] = -world[r1][r2];
-    }
-  }
-};
+        if (x >= sx) {
+          x = sx - 1;
+        }
+        if (y >= sy) {
+          y = sy - 1;
+        }
 
-//simulation interval, unless the toggle is false
-var simClock = setInterval(simulation, 1);
-simPause.onChange(state => {
-  if (state) {
-    clearInterval(simClock);
-  } else {
-    simClock = setInterval(simulation, 1);
-  }
-});
-
-
-//draw Interval, always so the mouseclick drawing is rendered
-setInterval(f => {
-  var data = [];
-  for (var x = 0; x < sx; x++) {
-    for (var y = 0; y < sy; y++) {
-      if (world[x][y] === -1) {
-        data.push(x + 0.5, y + 0.5);
+        if (x <= 0) {
+          x = 0;
+        }
+        if (y <= 0) {
+          y = 0;
+        }
+        if (!params.invertDraw) {
+          world[x][y] = -1;
+        } else {
+          world[x][y] = 1;
+        }
       }
     }
   }
-  drawArray(gl, data)
-}, 1);
+
+  //Simulation function
+  var simulation = f => {
+    for (var count = 0; count <= sx * sy / 2; count++) {
+      var m = 0;
+      var r1 = parseInt(Math.random() * sx);
+      var r2 = parseInt(Math.random() * sy);
+
+      var esq = r1 - 1;
+      var dir = r1 + 1;
+      var down = r2 + 1;
+      var up = r2 - 1;
+
+      if (esq < 0) {
+        esq = sx - 1;
+      }
+      if (dir >= sx) {
+        dir = 0;
+      }
+      if (up < 0) {
+        up = sy - 1;
+      }
+      if (down >= sy) {
+        down = 0;
+      }
+
+      var E = 2 * world[r1][r2] * (world[dir][r2] + world[esq][r2] + world[r1][down] + world[r1][up]);
+
+      if (E <= 0) {
+        world[r1][r2] = -world[r1][r2];
+      }
+      if (E > 0) {
+        var p = Math.exp(-E / params.T);
+        var r = Math.random();
+        if (r <= p) world[r1][r2] = -world[r1][r2];
+      }
+    }
+  };
+
+  //simulation interval, unless the toggle is false
+  var simClock = setInterval(simulation, 1);
+  simPause.onChange(state => {
+    if (state) {
+      clearInterval(simClock);
+    } else {
+      simClock = setInterval(simulation, 1);
+    }
+  });
+  //draw Interval, always so the mouseclick drawing is rendered
+  setInterval(f => {
+    var data = [];
+    for (var x = 0; x < sx; x++) {
+      for (var y = 0; y < sy; y++) {
+        if (world[x][y] === -1) {
+          data.push(x + 0.5, y + 0.5);
+        }
+      }
+    }
+    drawArray(gl, data)
+  }, 1);
+});
